@@ -1,0 +1,560 @@
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.wrap{display:flex;flex-direction:column;align-items:center;padding:1rem 0;gap:1.5rem}
+.nav{display:flex;align-items:center;justify-content:space-between;width:100%;max-width:540px}
+.nav-dots{display:flex;gap:6px;align-items:center}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--color-border-secondary);transition:all .2s}
+.dot.active{width:20px;border-radius:4px;background:#4584d5}
+.phone{width:100%;max-width:320px;border:1.5px solid var(--color-border-secondary);border-radius:28px;overflow:hidden;background:var(--color-background-primary)}
+.status-bar{height:44px;background:#1a73e8;display:flex;align-items:center;justify-content:space-between;padding:0 20px}
+.status-bar span{color:#fff;font-size:12px;font-weight:500}
+.screen{display:none;flex-direction:column;min-height:580px}
+.screen.active{display:flex}
+.topbar{height:52px;background:linear-gradient(135deg,#1a73e8,#0d47a1);display:flex;align-items:center;padding:0 16px;gap:12px}
+.topbar h2{color:#fff;font-size:15px;font-weight:500;flex:1}
+.progress-bar{height:4px;background:#e8e8e8}
+.progress-fill{height:100%;background:#34a853;transition:width .3s}
+.body{flex:1;padding:20px 16px;display:flex;flex-direction:column;gap:14px}
+.hero{background:linear-gradient(160deg,#0d47a1 0%,#1a73e8 60%,#42a5f5 100%);margin:-20px -16px 0;padding:32px 16px 28px;display:flex;flex-direction:column;align-items:center;gap:12px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-30px;right:-30px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,.06)}
+.hero::after{content:'';position:absolute;bottom:-20px;left:-20px;width:70px;height:70px;border-radius:50%;background:rgba(255,255,255,.04)}
+.logo-wrap{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+.logo-circle{width:52px;height:52px;border-radius:14px;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+.logo-text{color:#fff;font-size:18px;font-weight:500;letter-spacing:.3px}
+.logo-sub{color:rgba(255,255,255,.7);font-size:11px;letter-spacing:1.5px;text-transform:uppercase}
+.hero h1{color:#fff;font-size:20px;font-weight:500;text-align:center;line-height:1.4}
+.hero p{color:rgba(255,255,255,.8);font-size:13px;text-align:center;line-height:1.5}
+.badge-row{display:flex;gap:6px;margin-top:4px;flex-wrap:wrap;justify-content:center}
+.badge-pill{background:rgba(255,255,255,.18);color:#fff;font-size:11px;padding:4px 10px;border-radius:20px;backdrop-filter:blur(4px)}
+.badge{display:inline-flex;align-items:center;gap:4px;background:#E1F5EE;color:#0F6E56;font-size:11px;font-weight:500;padding:4px 10px;border-radius:20px;align-self:flex-start}
+.card-menu{border:0.5px solid var(--color-border-tertiary);border-radius:12px;padding:0;display:flex;align-items:stretch;cursor:pointer;transition:all .15s;overflow:hidden}
+.card-menu:hover{border-color:#1a73e8;box-shadow:0 0 0 2px rgba(26,115,232,.12)}
+.card-img{width:72px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:28px}
+.card-img.blue{background:#E6F1FB}
+.card-img.green{background:#EAF3DE}
+.card-img.amber{background:#FAEEDA}
+.card-content{flex:1;padding:12px 10px}
+.card-content h3{font-size:14px;font-weight:500;color:var(--color-text-primary)}
+.card-content p{font-size:12px;color:var(--color-text-secondary);margin-top:3px}
+.card-arrow{padding:0 12px;display:flex;align-items:center;color:var(--color-text-tertiary)}
+.step-header{display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--color-background-secondary);margin:0 -16px}
+.step-num{width:28px;height:28px;border-radius:50%;background:#1a73e8;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;flex-shrink:0}
+.step-num.done{background:#34a853}
+.step-title{font-size:13px;font-weight:500;color:var(--color-text-primary)}
+.step-sub{font-size:11px;color:var(--color-text-secondary)}
+.illus{background:var(--color-background-secondary);border-radius:12px;padding:16px;display:flex;flex-direction:column;align-items:center;gap:10px}
+.qr-frame{width:110px;height:110px;border:3px solid #1a73e8;border-radius:10px;display:flex;align-items:center;justify-content:center;background:#fff;position:relative}
+.qr-corner{position:absolute;width:14px;height:14px;border-color:#1a73e8;border-style:solid}
+.qr-corner.tl{top:-2px;left:-2px;border-width:3px 0 0 3px;border-radius:3px 0 0 0}
+.qr-corner.tr{top:-2px;right:-2px;border-width:3px 3px 0 0;border-radius:0 3px 0 0}
+.qr-corner.bl{bottom:-2px;left:-2px;border-width:0 0 3px 3px;border-radius:0 0 0 3px}
+.qr-corner.br{bottom:-2px;right:-2px;border-width:0 3px 3px 0;border-radius:0 0 3px 0}
+.qr-inner{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;padding:8px}
+.qr-cell{width:8px;height:8px;border-radius:1px}
+.qr-cell.on{background:#1a73e8}
+.qr-cell.off{background:transparent}
+.qr-label{font-size:10px;color:#1a73e8;font-weight:500;letter-spacing:.5px;margin-top:2px}
+.tip{background:#E8F4FD;border-radius:8px;padding:10px 12px;display:flex;gap:8px;align-items:flex-start;border-left:3px solid #1a73e8}
+.tip-icon{color:#1a73e8;font-size:16px;flex-shrink:0;margin-top:1px}
+.tip p{font-size:12px;color:#0d47a1;line-height:1.5}
+.info-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:0.5px solid var(--color-border-tertiary)}
+.info-row:last-child{border:none}
+.info-label{font-size:13px;color:var(--color-text-secondary)}
+.info-val{font-size:13px;font-weight:500;color:var(--color-text-primary)}
+.sus-item{padding:10px 0;border-bottom:0.5px solid var(--color-border-tertiary)}
+.sus-item:last-child{border:none}
+.sus-q{font-size:13px;color:var(--color-text-primary);margin-bottom:8px;line-height:1.4}
+.sus-scale{display:flex;gap:4px}
+.sus-btn{flex:1;height:32px;border:0.5px solid var(--color-border-secondary);border-radius:6px;background:var(--color-background-primary);cursor:pointer;font-size:12px;color:var(--color-text-secondary);transition:all .15s}
+.sus-btn.sel{background:#1a73e8;color:#fff;border-color:#1a73e8}
+.sus-score{background:linear-gradient(135deg,#0d47a1,#1a73e8);border-radius:12px;padding:20px 16px;display:flex;flex-direction:column;align-items:center;gap:6px}
+.sus-score .big{font-size:44px;font-weight:500;color:#fff}
+.sus-score .lbl{font-size:12px;color:rgba(255,255,255,.7)}
+.sus-score .verdict{background:#34a853;color:#fff;font-size:12px;font-weight:500;padding:4px 14px;border-radius:20px;margin-top:4px}
+.bottom{padding:14px 16px 20px;border-top:0.5px solid var(--color-border-tertiary)}
+.btn-primary{width:100%;height:44px;background:linear-gradient(135deg,#1a73e8,#0d47a1);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:500;cursor:pointer;transition:opacity .15s;letter-spacing:.2px}
+.btn-primary:hover{opacity:.9}
+.btn-secondary{width:100%;height:40px;background:transparent;color:#1a73e8;border:0.5px solid #1a73e8;border-radius:10px;font-size:13px;cursor:pointer;margin-top:8px}
+.seg{display:flex;gap:8px}
+.seg-btn{flex:1;padding:10px 8px;border:0.5px solid var(--color-border-secondary);border-radius:8px;text-align:center;cursor:pointer;transition:all .15s}
+.seg-btn.sel{border-color:#1a73e8;background:#E6F1FB}
+.seg-btn i{font-size:20px;color:#1a73e8;display:block;margin-bottom:4px}
+.seg-btn span{font-size:11px;color:var(--color-text-secondary);display:block}
+.seg-btn.sel span{color:#0d47a1}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{padding:6px 12px;border:0.5px solid var(--color-border-secondary);border-radius:20px;font-size:12px;color:var(--color-text-secondary);cursor:pointer;transition:all .15s}
+.chip.sel{background:#1a73e8;color:#fff;border-color:#1a73e8}
+.step-dots{display:flex;gap:6px;justify-content:center;padding:8px 0}
+.step-dot{width:6px;height:6px;border-radius:50%;background:var(--color-border-secondary)}
+.step-dot.active{background:#1a73e8}
+.topbar-back{color:#fff;font-size:20px;cursor:pointer;opacity:.85}
+.app-badge{display:flex;align-items:center;gap:6px;padding:6px 10px;border-radius:20px;font-size:11px;font-weight:500}
+</style>
+
+<div class="wrap">
+  <div class="nav">
+    <button class="btn-secondary" onclick="go(-1)" style="width:auto;padding:0 16px;height:36px;font-size:13px">
+      <i class="ti ti-arrow-left" style="font-size:14px;vertical-align:-2px" aria-hidden="true"></i> Sebelumnya
+    </button>
+    <div class="nav-dots" id="dots"></div>
+    <button id="nextBtn" onclick="go(1)" style="width:auto;padding:0 16px;height:36px;font-size:13px;background:transparent;color:#1a73e8;border:0.5px solid #1a73e8;border-radius:10px;cursor:pointer">
+      Selanjutnya <i class="ti ti-arrow-right" style="font-size:14px;vertical-align:-2px" aria-hidden="true"></i>
+    </button>
+  </div>
+
+  <div class="phone">
+    <div class="status-bar">
+      <span>9:41</span>
+      <span style="display:flex;gap:4px;align-items:center">
+        <i class="ti ti-wifi" style="font-size:14px;color:#fff" aria-hidden="true"></i>
+        <i class="ti ti-battery" style="font-size:14px;color:#fff" aria-hidden="true"></i>
+      </span>
+    </div>
+
+    <!-- SCREEN 1: SPLASH -->
+    <div class="screen active" id="s1">
+      <div class="hero" style="flex:1;justify-content:center;min-height:380px">
+        <div class="logo-wrap">
+          <div class="logo-circle">
+            <svg width="32" height="32" viewBox="0 0 32 32">
+              <rect x="2" y="2" width="12" height="12" rx="2" fill="#1a73e8"/>
+              <rect x="4" y="4" width="8" height="8" rx="1" fill="#fff"/>
+              <rect x="6" y="6" width="4" height="4" rx="0.5" fill="#1a73e8"/>
+              <rect x="18" y="2" width="12" height="12" rx="2" fill="#1a73e8"/>
+              <rect x="20" y="4" width="8" height="8" rx="1" fill="#fff"/>
+              <rect x="22" y="6" width="4" height="4" rx="0.5" fill="#1a73e8"/>
+              <rect x="2" y="18" width="12" height="12" rx="2" fill="#1a73e8"/>
+              <rect x="4" y="20" width="8" height="8" rx="1" fill="#fff"/>
+              <rect x="6" y="22" width="4" height="4" rx="0.5" fill="#1a73e8"/>
+              <rect x="18" y="18" width="4" height="4" rx="0.5" fill="#1a73e8"/>
+              <rect x="24" y="18" width="4" height="4" rx="0.5" fill="#1a73e8"/>
+              <rect x="18" y="24" width="4" height="4" rx="0.5" fill="#1a73e8"/>
+              <rect x="24" y="24" width="4" height="4" rx="0.5" fill="#1a73e8"/>
+              <rect x="21" y="21" width="2" height="2" rx="0.3" fill="#1a73e8"/>
+            </svg>
+          </div>
+          <div>
+            <div class="logo-text">PanduanQRIS</div>
+            <div class="logo-sub">by UMKM Digital</div>
+          </div>
+        </div>
+        <h1>Terima Pembayaran Digital<br>dengan Mudah &amp; Aman</h1>
+        <p>Panduan lengkap QRIS untuk pelaku<br>usaha kuliner Indonesia</p>
+        <div class="badge-row">
+          <span class="badge-pill"><i class="ti ti-check" style="font-size:10px;vertical-align:-1px" aria-hidden="true"></i> Gratis</span>
+          <span class="badge-pill"><i class="ti ti-clock" style="font-size:10px;vertical-align:-1px" aria-hidden="true"></i> 5 menit</span>
+          <span class="badge-pill"><i class="ti ti-star" style="font-size:10px;vertical-align:-1px" aria-hidden="true"></i> Mudah dipahami</span>
+        </div>
+      </div>
+      <div class="bottom">
+        <button class="btn-primary" onclick="go(1)">Mulai Sekarang</button>
+        <button class="btn-secondary" onclick="go(1)">Sudah punya QRIS? Langsung ke panduan</button>
+      </div>
+    </div>
+
+    <!-- SCREEN 2: PROFIL -->
+    <div class="screen" id="s2">
+      <div class="topbar">
+        <i class="ti ti-arrow-left topbar-back" onclick="go(-1)" aria-hidden="true"></i>
+        <h2>Kenali usaha Anda</h2>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:28%"></div></div>
+      <div class="body">
+        <p style="font-size:13px;color:var(--color-text-secondary)">Pilih jenis usaha Anda:</p>
+        <div class="seg">
+          <div class="seg-btn sel" onclick="selSeg(this)">
+            <i class="ti ti-tools-kitchen-2" aria-hidden="true"></i>
+            <span>Warung makan</span>
+          </div>
+          <div class="seg-btn" onclick="selSeg(this)">
+            <i class="ti ti-coffee" aria-hidden="true"></i>
+            <span>Kedai minuman</span>
+          </div>
+          <div class="seg-btn" onclick="selSeg(this)">
+            <i class="ti ti-building-store" aria-hidden="true"></i>
+            <span>Toko kelontong</span>
+          </div>
+        </div>
+        <p style="font-size:13px;color:var(--color-text-secondary);margin-top:4px">Berapa kali terima pembayaran per hari?</p>
+        <div class="chips">
+          <div class="chip sel" onclick="selChip(this)">Kurang dari 10x</div>
+          <div class="chip" onclick="selChip(this)">10 – 30x</div>
+          <div class="chip" onclick="selChip(this)">30 – 50x</div>
+          <div class="chip" onclick="selChip(this)">Lebih dari 50x</div>
+        </div>
+        <p style="font-size:13px;color:var(--color-text-secondary);margin-top:4px">Status QRIS Anda saat ini:</p>
+        <div class="chips">
+          <div class="chip sel" onclick="selChip(this)">Belum punya QRIS</div>
+          <div class="chip" onclick="selChip(this)">Sudah punya, jarang pakai</div>
+          <div class="chip" onclick="selChip(this)">Sudah rutin pakai</div>
+        </div>
+      </div>
+      <div class="bottom">
+        <button class="btn-primary" onclick="go(1)">Lanjutkan</button>
+      </div>
+    </div>
+
+    <!-- SCREEN 3: MENU -->
+    <div class="screen" id="s3">
+      <div class="topbar">
+        <i class="ti ti-arrow-left topbar-back" onclick="go(-1)" aria-hidden="true"></i>
+        <h2>Pilih topik panduan</h2>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:42%"></div></div>
+      <div class="body">
+        <div class="badge"><i class="ti ti-user" style="font-size:11px" aria-hidden="true"></i> Warung makan · pemula</div>
+
+        <div class="card-menu" onclick="go(1)">
+          <div class="card-img blue">
+            <svg width="40" height="40" viewBox="0 0 40 40">
+              <rect x="8" y="6" width="24" height="28" rx="3" fill="#B5D4F4"/>
+              <rect x="11" y="10" width="10" height="10" rx="2" fill="#1a73e8"/>
+              <rect x="13" y="12" width="6" height="6" rx="1" fill="#fff"/>
+              <rect x="14" y="13" width="4" height="4" rx="0.5" fill="#1a73e8"/>
+              <rect x="23" y="10" width="6" height="2" rx="1" fill="#1a73e8"/>
+              <rect x="23" y="14" width="6" height="2" rx="1" fill="#B5D4F4"/>
+              <rect x="11" y="23" width="18" height="2" rx="1" fill="#B5D4F4"/>
+              <rect x="11" y="27" width="12" height="2" rx="1" fill="#B5D4F4"/>
+              <circle cx="28" cy="30" r="6" fill="#1a73e8"/>
+              <path d="M25.5 30l1.5 1.5L30.5 28" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            </svg>
+          </div>
+          <div class="card-content">
+            <h3>Cara daftar QRIS</h3>
+            <p>Daftar merchant · 3 langkah mudah</p>
+          </div>
+          <div class="card-arrow"><i class="ti ti-chevron-right" aria-hidden="true"></i></div>
+        </div>
+
+        <div class="card-menu" onclick="go(1)">
+          <div class="card-img green">
+            <svg width="40" height="40" viewBox="0 0 40 40">
+              <rect x="6" y="6" width="14" height="14" rx="2" fill="#3B6D11"/>
+              <rect x="8" y="8" width="10" height="10" rx="1" fill="#EAF3DE"/>
+              <rect x="10" y="10" width="6" height="6" rx="0.5" fill="#3B6D11"/>
+              <rect x="20" y="6" width="14" height="14" rx="2" fill="#3B6D11"/>
+              <rect x="22" y="8" width="10" height="10" rx="1" fill="#EAF3DE"/>
+              <rect x="24" y="10" width="6" height="6" rx="0.5" fill="#3B6D11"/>
+              <rect x="6" y="20" width="14" height="14" rx="2" fill="#3B6D11"/>
+              <rect x="8" y="22" width="10" height="10" rx="1" fill="#EAF3DE"/>
+              <rect x="10" y="24" width="6" height="6" rx="0.5" fill="#3B6D11"/>
+              <rect x="20" y="20" width="4" height="4" rx="0.5" fill="#3B6D11"/>
+              <rect x="26" y="20" width="4" height="4" rx="0.5" fill="#3B6D11"/>
+              <rect x="20" y="26" width="4" height="4" rx="0.5" fill="#3B6D11"/>
+              <rect x="26" y="26" width="4" height="4" rx="0.5" fill="#3B6D11"/>
+            </svg>
+          </div>
+          <div class="card-content">
+            <h3>Cara terima pembayaran</h3>
+            <p>Scan QR · konfirmasi otomatis · 4 langkah</p>
+          </div>
+          <div class="card-arrow"><i class="ti ti-chevron-right" aria-hidden="true"></i></div>
+        </div>
+
+        <div class="card-menu" onclick="go(1)">
+          <div class="card-img amber">
+            <svg width="40" height="40" viewBox="0 0 40 40">
+              <rect x="8" y="8" width="24" height="18" rx="3" fill="#EF9F27"/>
+              <rect x="11" y="11" width="8" height="5" rx="1" fill="#fff"/>
+              <rect x="11" y="18" width="4" height="2" rx="1" fill="#FAEEDA"/>
+              <rect x="17" y="18" width="4" height="2" rx="1" fill="#FAEEDA"/>
+              <rect x="23" y="18" width="4" height="2" rx="1" fill="#FAEEDA"/>
+              <rect x="14" y="28" width="12" height="4" rx="1" fill="#BA7517"/>
+              <rect x="16" y="26" width="8" height="3" rx="0.5" fill="#BA7517"/>
+              <circle cx="28" cy="28" r="6" fill="#34a853"/>
+              <path d="M25.5 28l1.5 1.5L30.5 26" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            </svg>
+          </div>
+          <div class="card-content">
+            <h3>Cek saldo &amp; riwayat</h3>
+            <p>Lihat uang masuk · tarik ke rekening</p>
+          </div>
+          <div class="card-arrow"><i class="ti ti-chevron-right" aria-hidden="true"></i></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCREEN 4: DAFTAR QRIS -->
+    <div class="screen" id="s4">
+      <div class="topbar">
+        <i class="ti ti-arrow-left topbar-back" onclick="go(-1)" aria-hidden="true"></i>
+        <h2>Cara daftar QRIS</h2>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:57%"></div></div>
+      <div class="body" style="padding-top:12px">
+        <div class="step-header">
+          <div class="step-num done">1</div>
+          <div><div class="step-title">Download aplikasi</div><div class="step-sub">Selesai</div></div>
+          <i class="ti ti-check" style="margin-left:auto;color:#34a853;font-size:18px" aria-hidden="true"></i>
+        </div>
+        <div class="step-header">
+          <div class="step-num">2</div>
+          <div><div class="step-title">Daftar sebagai merchant</div><div class="step-sub">Sedang berjalan</div></div>
+        </div>
+        <div class="illus">
+          <div style="width:64px;height:64px;border-radius:14px;background:#E6F1FB;display:flex;align-items:center;justify-content:center">
+            <i class="ti ti-forms" style="color:#1a73e8;font-size:28px" aria-hidden="true"></i>
+          </div>
+          <p style="font-size:12px;color:var(--color-text-secondary);text-align:center;line-height:1.5">Buka aplikasi → pilih "Daftar Merchant" → isi nama warung, alamat, dan nomor HP Anda</p>
+        </div>
+        <div class="tip">
+          <i class="ti ti-info-circle tip-icon" aria-hidden="true"></i>
+          <p>Siapkan KTP dan foto warung Anda. Proses verifikasi 1–2 hari kerja.</p>
+        </div>
+        <div class="step-header">
+          <div class="step-num" style="background:var(--color-border-secondary);color:var(--color-text-secondary)">3</div>
+          <div><div class="step-title">Cetak kode QR</div><div class="step-sub">Belum dimulai</div></div>
+        </div>
+        <div class="step-dots">
+          <div class="step-dot"></div><div class="step-dot active"></div><div class="step-dot"></div>
+        </div>
+      </div>
+      <div class="bottom">
+        <button class="btn-primary" onclick="go(1)">Langkah berikutnya</button>
+      </div>
+    </div>
+
+    <!-- SCREEN 5: TERIMA BAYAR -->
+    <div class="screen" id="s5">
+      <div class="topbar">
+        <i class="ti ti-arrow-left topbar-back" onclick="go(-1)" aria-hidden="true"></i>
+        <h2>Cara terima pembayaran</h2>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:71%"></div></div>
+      <div class="body" style="padding-top:12px">
+        <div style="display:flex;gap:6px;margin-bottom:4px">
+          <div style="flex:1;height:4px;border-radius:2px;background:#34a853"></div>
+          <div style="flex:1;height:4px;border-radius:2px;background:#34a853"></div>
+          <div style="flex:1;height:4px;border-radius:2px;background:#1a73e8"></div>
+          <div style="flex:1;height:4px;border-radius:2px;background:var(--color-border-secondary)"></div>
+        </div>
+        <p style="font-size:11px;color:var(--color-text-secondary)">Langkah 3 dari 4</p>
+
+        <div class="illus" style="margin-top:4px">
+          <div class="qr-frame">
+            <div class="qr-corner tl"></div>
+            <div class="qr-corner tr"></div>
+            <div class="qr-corner bl"></div>
+            <div class="qr-corner br"></div>
+            <div class="qr-inner" id="qrGrid"></div>
+          </div>
+          <div class="qr-label">SCAN UNTUK MEMBAYAR</div>
+          <p style="font-size:12px;color:var(--color-text-secondary);text-align:center;line-height:1.5">Tunjukkan kode QR ini ke pelanggan. Pelanggan scan pakai aplikasi apapun</p>
+        </div>
+
+        <div style="background:var(--color-background-secondary);border-radius:10px;padding:12px">
+          <p style="font-size:12px;font-weight:500;color:var(--color-text-primary);margin-bottom:8px">Semua aplikasi bisa scan QRIS:</p>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <span class="app-badge" style="background:#E6F1FB;color:#0C447C">GoPay</span>
+            <span class="app-badge" style="background:#FAEEDA;color:#633806">OVO</span>
+            <span class="app-badge" style="background:#E1F5EE;color:#085041">Dana</span>
+            <span class="app-badge" style="background:#EEEDFE;color:#26215C">ShopeePay</span>
+            <span class="app-badge" style="background:#E6F1FB;color:#0C447C">M-Banking</span>
+          </div>
+        </div>
+        <div class="tip">
+          <i class="ti ti-alert-circle tip-icon" aria-hidden="true"></i>
+          <p>QR tidak terbaca? Coba cerahkan layar atau cetak ulang kode QR Anda.</p>
+        </div>
+      </div>
+      <div class="bottom">
+        <button class="btn-primary" onclick="go(1)">Langkah berikutnya</button>
+      </div>
+    </div>
+
+    <!-- SCREEN 6: SALDO & RIWAYAT -->
+    <div class="screen" id="s6">
+      <div class="topbar">
+        <i class="ti ti-arrow-left topbar-back" onclick="go(-1)" aria-hidden="true"></i>
+        <h2>Cek saldo &amp; riwayat</h2>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:85%"></div></div>
+      <div class="body" style="padding-top:12px">
+        <div style="background:linear-gradient(135deg,#0d47a1,#1a73e8);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:4px">
+          <p style="font-size:12px;color:rgba(255,255,255,.7)">Saldo masuk hari ini</p>
+          <p style="font-size:26px;font-weight:500;color:#fff">Rp 347.500</p>
+          <p style="font-size:11px;color:rgba(255,255,255,.6)">12 transaksi · diperbarui otomatis</p>
+        </div>
+        <p style="font-size:13px;font-weight:500;color:var(--color-text-primary)">Riwayat transaksi</p>
+        <div class="info-row">
+          <div><div class="info-label">Pelanggan scan QR</div><div style="font-size:11px;color:var(--color-text-tertiary)">13:42 · GoPay</div></div>
+          <div class="info-val" style="color:#34a853">+Rp 25.000</div>
+        </div>
+        <div class="info-row">
+          <div><div class="info-label">Pelanggan scan QR</div><div style="font-size:11px;color:var(--color-text-tertiary)">12:15 · OVO</div></div>
+          <div class="info-val" style="color:#34a853">+Rp 45.000</div>
+        </div>
+        <div class="info-row">
+          <div><div class="info-label">Tarik ke rekening BRI</div><div style="font-size:11px;color:var(--color-text-tertiary)">09:00 · transfer otomatis</div></div>
+          <div class="info-val" style="color:#D85A30">-Rp 200.000</div>
+        </div>
+        <div class="tip">
+          <i class="ti ti-bulb tip-icon" aria-hidden="true"></i>
+          <p>Aktifkan transfer otomatis ke rekening agar saldo langsung masuk setiap hari.</p>
+        </div>
+      </div>
+      <div class="bottom">
+        <button class="btn-primary" onclick="go(1)">Selesai &amp; nilai panduan ini</button>
+      </div>
+    </div>
+
+    <!-- SCREEN 7: SUS -->
+    <div class="screen" id="s7">
+      <div class="topbar">
+        <i class="ti ti-arrow-left topbar-back" onclick="go(-1)" aria-hidden="true"></i>
+        <h2>Penilaian panduan</h2>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div>
+      <div class="body" style="gap:10px">
+        <p style="font-size:12px;color:var(--color-text-secondary)">Pilih angka 1 (sangat tidak setuju) sampai 5 (sangat setuju)</p>
+        <div>
+          <div class="sus-item">
+            <div class="sus-q">1. Saya merasa ingin menggunakan panduan ini secara rutin</div>
+            <div class="sus-scale" data-q="1">
+              <button class="sus-btn" onclick="pickSUS(this,1,1)">1</button><button class="sus-btn" onclick="pickSUS(this,1,2)">2</button><button class="sus-btn" onclick="pickSUS(this,1,3)">3</button><button class="sus-btn" onclick="pickSUS(this,1,4)">4</button><button class="sus-btn sel" onclick="pickSUS(this,1,5)">5</button>
+            </div>
+          </div>
+          <div class="sus-item">
+            <div class="sus-q">2. Panduan ini terlalu rumit untuk dipahami</div>
+            <div class="sus-scale" data-q="2">
+              <button class="sus-btn sel" onclick="pickSUS(this,2,1)">1</button><button class="sus-btn" onclick="pickSUS(this,2,2)">2</button><button class="sus-btn" onclick="pickSUS(this,2,3)">3</button><button class="sus-btn" onclick="pickSUS(this,2,4)">4</button><button class="sus-btn" onclick="pickSUS(this,2,5)">5</button>
+            </div>
+          </div>
+          <div class="sus-item">
+            <div class="sus-q">3. Panduan ini mudah digunakan</div>
+            <div class="sus-scale" data-q="3">
+              <button class="sus-btn" onclick="pickSUS(this,3,1)">1</button><button class="sus-btn" onclick="pickSUS(this,3,2)">2</button><button class="sus-btn" onclick="pickSUS(this,3,3)">3</button><button class="sus-btn sel" onclick="pickSUS(this,3,4)">4</button><button class="sus-btn" onclick="pickSUS(this,3,5)">5</button>
+            </div>
+          </div>
+          <div class="sus-item">
+            <div class="sus-q">4. Saya butuh bantuan orang lain untuk menggunakan panduan ini</div>
+            <div class="sus-scale" data-q="4">
+              <button class="sus-btn sel" onclick="pickSUS(this,4,1)">1</button><button class="sus-btn" onclick="pickSUS(this,4,2)">2</button><button class="sus-btn" onclick="pickSUS(this,4,3)">3</button><button class="sus-btn" onclick="pickSUS(this,4,4)">4</button><button class="sus-btn" onclick="pickSUS(this,4,5)">5</button>
+            </div>
+          </div>
+          <div class="sus-item">
+            <div class="sus-q">5. Berbagai fitur panduan ini terintegrasi dengan baik</div>
+            <div class="sus-scale" data-q="5">
+              <button class="sus-btn" onclick="pickSUS(this,5,1)">1</button><button class="sus-btn" onclick="pickSUS(this,5,2)">2</button><button class="sus-btn" onclick="pickSUS(this,5,3)">3</button><button class="sus-btn sel" onclick="pickSUS(this,5,4)">4</button><button class="sus-btn" onclick="pickSUS(this,5,5)">5</button>
+            </div>
+          </div>
+        </div>
+        <p style="font-size:11px;color:var(--color-text-tertiary);text-align:center">5 dari 10 pertanyaan SUS · demo</p>
+      </div>
+      <div class="bottom">
+        <button class="btn-primary" onclick="showScore()">Lihat skor saya</button>
+      </div>
+    </div>
+
+    <!-- SCREEN 8: HASIL -->
+    <div class="screen" id="s8">
+      <div class="topbar" style="background:linear-gradient(135deg,#1b5e20,#34a853)">
+        <h2 style="text-align:center;flex:1">Hasil penilaian</h2>
+      </div>
+      <div class="body" style="align-items:center;justify-content:center;gap:16px">
+        <div class="sus-score" style="width:100%">
+          <div class="lbl">Skor usabilitas Anda</div>
+          <div class="big" id="scoreVal">82</div>
+          <div class="lbl">dari 100 poin</div>
+          <div class="verdict"><i class="ti ti-check" style="font-size:12px;vertical-align:-1px" aria-hidden="true"></i> Acceptable</div>
+        </div>
+        <div style="width:100%;background:var(--color-background-secondary);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:8px">
+          <div class="info-row"><span class="info-label">Kemudahan penggunaan</span><span class="info-val" style="color:#34a853">Baik</span></div>
+          <div class="info-row"><span class="info-label">Niat penggunaan rutin</span><span class="info-val" style="color:#34a853">Tinggi</span></div>
+          <div class="info-row"><span class="info-label">Standar SUS (≥ 68)</span><span class="info-val" style="color:#34a853">Terpenuhi</span></div>
+        </div>
+        <div class="tip" style="width:100%">
+          <i class="ti ti-heart tip-icon" aria-hidden="true"></i>
+          <p>Terima kasih! Penilaian Anda membantu meningkatkan kualitas panduan QRIS untuk sesama pelaku UMKM.</p>
+        </div>
+      </div>
+      <div class="bottom">
+        <button class="btn-primary" onclick="restart()">Kembali ke menu utama</button>
+      </div>
+    </div>
+  </div>
+  <p style="font-size:12px;color:var(--color-text-tertiary);text-align:center;max-width:320px">Klik tombol navigasi atau tombol di dalam layar untuk berpindah antar halaman</p>
+</div>
+
+<script>
+var cur=0;
+var screens=['s1','s2','s3','s4','s5','s6','s7','s8'];
+var susVals={1:5,2:1,3:4,4:1,5:4};
+
+var qrPattern=[
+  1,1,1,1,1,1,1,
+  1,0,0,0,0,0,1,
+  1,0,1,1,1,0,1,
+  1,0,1,0,1,0,1,
+  1,0,1,1,1,0,1,
+  1,0,0,0,0,0,1,
+  1,1,1,1,1,1,1
+];
+
+function buildQR(){
+  var g=document.getElementById('qrGrid');
+  if(!g)return;
+  g.innerHTML='';
+  for(var i=0;i<49;i++){
+    var d=document.createElement('div');
+    d.className='qr-cell '+(qrPattern[i]?'on':'off');
+    g.appendChild(d);
+  }
+}
+
+function render(){
+  screens.forEach(function(id,i){
+    var el=document.getElementById(id);
+    if(el)el.classList.toggle('active',i===cur);
+  });
+  var dots=document.getElementById('dots');
+  if(dots){
+    dots.innerHTML='';
+    for(var i=0;i<screens.length-1;i++){
+      var d=document.createElement('div');
+      d.className='dot'+(i===cur?' active':'');
+      dots.appendChild(d);
+    }
+  }
+  var nb=document.getElementById('nextBtn');
+  if(nb)nb.style.display=cur>=screens.length-1?'none':'inline-flex';
+}
+
+function go(dir){
+  var next=cur+dir;
+  if(next<0)next=0;
+  if(next>=screens.length)next=screens.length-1;
+  cur=next;
+  render();
+  if(cur===4)buildQR();
+}
+
+function selSeg(el){
+  el.closest('.seg').querySelectorAll('.seg-btn').forEach(function(b){b.classList.remove('sel')});
+  el.classList.add('sel');
+}
+function selChip(el){
+  var g=el.closest('.chips');
+  g.querySelectorAll('.chip').forEach(function(c){c.classList.remove('sel')});
+  el.classList.add('sel');
+}
+function pickSUS(btn,q,val){
+  btn.closest('.sus-scale').querySelectorAll('.sus-btn').forEach(function(b){b.classList.remove('sel')});
+  btn.classList.add('sel');
+  susVals[q]=val;
+}
+function calcScore(){
+  var odd=[1,3,5],even=[2,4],sum=0;
+  odd.forEach(function(q){sum+=(susVals[q]||3)-1;});
+  even.forEach(function(q){sum+=5-(susVals[q]||3);});
+  return Math.round(sum*2.5*2);
+}
+function showScore(){
+  var s=calcScore();
+  document.getElementById('scoreVal').textContent=s;
+  cur=7;render();
+}
+function restart(){cur=2;render();}
+
+render();
+</script>
